@@ -13,6 +13,8 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Navbar } from '.';
 import { Input } from '../ui'
 import { useState } from 'react';
+import {useSelector, useDispatch} from 'react-redux'
+import { loginUserStart } from '../slice/auth';
 
 function Copyright(props) {
    
@@ -43,6 +45,15 @@ export default function SignIn() {
     };
     const [uName, setUName] = useState('')
     const [password, setPassword] = useState('')
+    const dispatch = useDispatch()
+    const {isLoding} = useSelector(state => state.auth)
+
+    const loginHandle = e => {
+        e.preventDefault()
+        dispatch(loginUserStart())
+    }
+
+    console.log(isLoding);
 
     return (
         <ThemeProvider theme={defaultTheme}>
@@ -73,9 +84,12 @@ export default function SignIn() {
                             fullWidth
                             variant="contained"
                             sx={{ mt: 3, mb: 2 }}
+                            onClick={loginHandle}
+                            disabled={isLoding}
                         >
-                            Sign In
+                           {isLoding ? 'Loading...' : 'Login'}
                         </Button>
+                      
                         <Grid container>
                             <Grid item xs>
                                 <Link href="#" variant="body2">

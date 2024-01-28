@@ -15,25 +15,40 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Navbar } from '.';
 import { Input } from '../ui';
 import { useState } from 'react';
-
+import { useSelector, useDispatch } from 'react-redux'
+import { loginUserStart, registerUserFailure, registerUserStart, registerUserSuccess } from '../slice/auth';
+import AuthService from '../service/auth';
 const defaultTheme = createTheme();
 
 export default function SignUp() {
   // const [] = useState({fitrstname: '', lastname: '', username: '', email: '', password: ''})
-  const [fName, setFName] = useState('')
-  const [lName, setLName] = useState('')
-  const [uName, setUName] = useState('')
+  // const [fName, setFName] = useState('')
+  // const [lName, setLName] = useState('')
+  const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
-  };
+  const dispatch = useDispatch()
+  const { isLoding } = useSelector(state => state.auth)
+
+  const loginHandle = async(e) => {
+    e.preventDefault()
+    dispatch(registerUserStart())
+    const user = {username: name, email, password}
+    try {
+      const response = await AuthService.userRegister(user)
+      console.log(response);
+      console.log(user);
+      dispatch(registerUserSuccess())
+    } catch (error) {
+      dispatch(registerUserFailure())
+    }
+
+
+
+  }
+
+
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -54,16 +69,16 @@ export default function SignUp() {
           <Typography component="h1" variant="h5">
             Sign up
           </Typography>
-          <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
+          <Box component="form" sx={{ mt: 3 }}>
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
+              {/* <Grid item xs={12} sm={6}>
                 <Input state={fName} setState={setFName} label={'Fits Name'} />
               </Grid>
-              <Grid  item xs={12} sm={6}>
+              <Grid item xs={12} sm={6}>
                 <Input state={lName} setState={setLName} label={'Last Name'} />
-              </Grid>
+              </Grid> */}
 
-              <Input state={uName} setState={setUName} label={'Username'} />
+              <Input state={name} setState={setName} label={'Username'} />
               <Input state={email} type={'email'} setState={setEmail} label={'Email'} />
               <Input state={password} setState={setPassword} type={'password'} label={'Password'} />
 
@@ -73,8 +88,10 @@ export default function SignUp() {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
+              onClick={loginHandle}
+              disabled={isLoding}
             >
-              Sign Up
+              {isLoding ? 'Loading...' : 'Register'}
             </Button>
             <Grid container justifyContent="flex-end">
               <Grid item>
@@ -85,7 +102,7 @@ export default function SignUp() {
             </Grid>
           </Box>
         </Box>
-       
+
       </Container>
     </ThemeProvider>
   );
