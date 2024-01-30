@@ -2,9 +2,6 @@ import * as React from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
-import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
@@ -12,12 +9,13 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { Navbar } from '.';
+import { Navbar, ValidationError } from '.';
 import { Input } from '../ui';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux'
-import { loginUserStart, registerUserFailure, registerUserStart, registerUserSuccess } from '../slice/auth';
+import {signUserFailure, signUserStart, signUserSuccess } from '../slice/auth';
 import AuthService from '../service/auth';
+import { useNavigate } from 'react-router-dom';
 const defaultTheme = createTheme();
 
 export default function SignUp() {
@@ -29,24 +27,30 @@ export default function SignUp() {
   const [password, setPassword] = useState('')
 
   const dispatch = useDispatch()
-  const { isLoding } = useSelector(state => state.auth)
+  const { isLoding, loggedIn } = useSelector(state => state.auth)
+  const navigate = useNavigate()
 
-  const loginHandle = async(e) => {
+  const registerHandle = async(e) => {
     e.preventDefault()
-    dispatch(registerUserStart())
+    dispatch(signUserStart())
     const user = {username: name, email, password}
     try {
       const response = await AuthService.userRegister(user)
-      console.log(response);
+      console.log(response.user);
       console.log(user);
-      dispatch(registerUserSuccess())
+      navigate('/login')
+      dispatch(signUserSuccess(response.user))
     } catch (error) {
-      dispatch(registerUserFailure())
+      dispatch(signUserFailure(error.response.data.errors))
     }
 
 
 
   }
+
+  useEffect(() => {
+    if(loggedIn) navigate('/')
+  }, [])
 
 
 
@@ -69,6 +73,7 @@ export default function SignUp() {
           <Typography component="h1" variant="h5">
             Sign up
           </Typography>
+          <ValidationError/>
           <Box component="form" sx={{ mt: 3 }}>
             <Grid container spacing={2}>
               {/* <Grid item xs={12} sm={6}>
@@ -78,7 +83,7 @@ export default function SignUp() {
                 <Input state={lName} setState={setLName} label={'Last Name'} />
               </Grid> */}
 
-              <Input state={name} setState={setName} label={'Username'} />
+              <Input state={name} type='text' setState={setName} label={'Username'} />
               <Input state={email} type={'email'} setState={setEmail} label={'Email'} />
               <Input state={password} setState={setPassword} type={'password'} label={'Password'} />
 
@@ -88,7 +93,7 @@ export default function SignUp() {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
-              onClick={loginHandle}
+              onClick={registerHandle}
               disabled={isLoding}
             >
               {isLoding ? 'Loading...' : 'Register'}

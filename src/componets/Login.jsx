@@ -10,11 +10,13 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { Navbar } from '.';
+import { Navbar, ValidationError } from '.';
 import { Input } from '../ui'
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {useSelector, useDispatch} from 'react-redux'
-import { loginUserStart } from '../slice/auth';
+import { signUserFailure, signUserStart, signUserSuccess } from '../slice/auth';
+import AuthService from '../service/auth';
+import { useNavigate } from 'react-router-dom';
 
 function Copyright(props) {
    
@@ -43,17 +45,32 @@ export default function SignIn() {
             password: data.get('password'),
         });
     };
-    const [uName, setUName] = useState('')
+    const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const dispatch = useDispatch()
-    const {isLoding} = useSelector(state => state.auth)
+    const { isLoding, loggedIn } = useSelector(state => state.auth)
+    const navigate = useNavigate()
 
-    const loginHandle = e => {
+    const loginHandle = async (e) => {
         e.preventDefault()
-        dispatch(loginUserStart())
+        dispatch(signUserStart())
+        const user = {email, password}
+
+        try{
+            const response = await AuthService.userLogin(user)
+            dispatch(signUserSuccess(response.user))
+            navigate('/')
+        }catch(error){
+            dispatch(signUserFailure(error.response.data.errors))
+        }
+        
+        
     }
 
     console.log(isLoding);
+    useEffect(() => {
+        if(loggedIn) navigate('/')
+      }, [])
 
     return (
         <ThemeProvider theme={defaultTheme}>
@@ -74,8 +91,9 @@ export default function SignIn() {
                     <Typography component="h1" variant="h5">
                         Sign in
                     </Typography>
+                    <ValidationError/>
                     <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-                        <Input state={uName} setState={setUName} label={'Username'} />
+                        <Input state={email} type={'email'} setState={setEmail} label={'Email'} />
                         <Input state={password} setState={setPassword} type={'password'} label={'Password'} />
 
 
