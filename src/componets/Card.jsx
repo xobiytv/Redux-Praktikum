@@ -15,6 +15,7 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Link from '@mui/material/Link';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { Loader } from '../ui'
 import { useSelector } from 'react-redux';
 
 function Copyright() {
@@ -36,7 +37,7 @@ function Copyright() {
 const defaultTheme = createTheme();
 
 export default function Album() {
-    const {articles} = useSelector(state => state.article)
+  const { articles, isLoding } = useSelector(state => state.article)
   return (
     <ThemeProvider theme={defaultTheme}>
       {/* <CssBaseline />
@@ -84,10 +85,12 @@ export default function Album() {
           </Container>
         </Box> */}
         <Container sx={{ py: 8 }} >
-          {/* End hero unit */}
+          {/* End hero unit */} {isLoding && <Loader />}
           <div className='flex justify-center flex-wrap gap-5'>
             {articles.map(item => (
               <div className='w-3/12 '>
+               
+                
                 <Card key={item.id}
                   sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}
                 >
@@ -104,7 +107,7 @@ export default function Album() {
                       {item.title}
                     </Typography>
                     <Typography>
-                     {item.description}
+                      {item.description}
                     </Typography>
                   </CardContent>
                   <CardActions>
@@ -114,7 +117,8 @@ export default function Album() {
                   </CardActions>
                 </Card>
               </div>
-             ))} 
+
+            ))}
           </div>
         </Container>
       </main>
