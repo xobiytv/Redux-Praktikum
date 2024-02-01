@@ -17,6 +17,7 @@ import Link from '@mui/material/Link';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Loader } from '../ui'
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 function Copyright() {
   return (
@@ -38,6 +39,7 @@ const defaultTheme = createTheme();
 
 export default function Album() {
   const { articles, isLoding } = useSelector(state => state.article)
+  const navigate = useNavigate()
   return (
     <ThemeProvider theme={defaultTheme}>
       {/* <CssBaseline />
@@ -111,7 +113,7 @@ export default function Album() {
                     </Typography>
                   </CardContent>
                   <CardActions>
-                    <Button variant="outlined" size="small">View</Button>
+                    <Button onClick={() => navigate(`/article/${item.slug}`)} variant="outlined" size="small">View</Button>
                     <Button variant="outlined" size="small">Edit</Button>
                     <Button variant="outlined" color="error" size="small">Delet</Button>
                   </CardActions>

@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom'
-import { Main, Login, Register } from './componets'
+import { Main, Login, Register, ArticleDetail } from './componets'
 import AuthService from './service/auth'
 import { useDispatch } from 'react-redux';
 import { signUserSuccess } from './slice/auth';
@@ -48,6 +48,7 @@ function App() {
         <Route path='/' element={<Main />} />
         <Route path='/login' element={<Login />} />
         <Route path='/register' element={<Register />} />
+        <Route path='/article/:slug' element={<ArticleDetail />} />
       </Routes>
 
 
