@@ -50,7 +50,7 @@ export default function SignUp() {
 
   useEffect(() => {
     if(loggedIn) navigate('/')
-  }, [])
+  }, [loggedIn])
 
 
 

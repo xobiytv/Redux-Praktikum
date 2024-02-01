@@ -70,7 +70,7 @@ export default function SignIn() {
     console.log(isLoding);
     useEffect(() => {
         if(loggedIn) navigate('/')
-      }, [])
+      }, [loggedIn])
 
     return (
         <ThemeProvider theme={defaultTheme}>
