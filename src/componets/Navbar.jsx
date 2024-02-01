@@ -6,15 +6,16 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Menu from '@mui/material/Menu';
 import MenuIcon from '@mui/icons-material/Menu';
-import Container from '@mui/material/Container';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import { Link } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-
+import { useDispatch, useSelector } from 'react-redux';
+import { removeItem } from '../helpers/persistance-store';
+import { useNavigate } from 'react-router-dom';
+import { logoutUser } from '../slice/auth';
 const pages = [
 
     {
@@ -32,6 +33,7 @@ const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 function ResponsiveAppBar() {
     const [anchorElNav, setAnchorElNav] = React.useState(null);
     const [anchorElUser, setAnchorElUser] = React.useState(null);
+    
 
     const handleOpenNavMenu = (event) => {
         setAnchorElNav(event.currentTarget);
@@ -50,6 +52,14 @@ function ResponsiveAppBar() {
 
     const { loggedIn, user } = useSelector(state => state.auth)
     console.log(user);
+    const navigator = useNavigate()
+    const dispatch = useDispatch()
+
+    const logoutHandle = () => {
+        dispatch(logoutUser())
+        removeItem('token')
+        navigator('/login')
+    }  
 
     return (
         <AppBar position="static">
@@ -148,7 +158,7 @@ function ResponsiveAppBar() {
                                     </IconButton>
 
                                 </Tooltip>
-                                <button className='btn rounded px-3 ml-3 py-1 border-[1px] active:border-red-500 active:text-red-500'>Logout</button>
+                                <button onClick={logoutHandle} className='btn rounded px-3 ml-3 py-1 border-[1px] active:border-red-500 active:text-red-500'>Logout</button>
                             </div>
 
                         ) : (
