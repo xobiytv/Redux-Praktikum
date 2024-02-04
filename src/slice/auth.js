@@ -18,8 +18,9 @@ export const AuthSlice = createSlice({
             state.loggedIn = true
             state.isLoding = false 
             setItem('token', user.payload.token)
+            state.user = user.payload
             localStorage.setItem('token', user.payload.token)
-            // state.user = user.payload
+            
         },
         signUserFailure: (state, action) => {
             state.isLoding = false 

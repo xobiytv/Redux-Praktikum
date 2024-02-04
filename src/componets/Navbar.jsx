@@ -158,6 +158,7 @@ function ResponsiveAppBar() {
                                     </IconButton>
 
                                 </Tooltip>
+                                <Link to={'/create-article'}  className='btn rounded px-3 ml-3 py-1 border-[1px] active:border-blue-500 active:text-blue-500'>Create Article</Link>
                                 <button onClick={logoutHandle} className='btn rounded px-3 ml-3 py-1 border-[1px] active:border-red-500 active:text-red-500'>Logout</button>
                             </div>
 
